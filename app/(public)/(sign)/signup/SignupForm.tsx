@@ -2,9 +2,13 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import SignupSchema from "@/app/libs/validations/SignupSchema";
+import { joiResolver } from "@hookform/resolvers/joi";
 
 export default function SignupForm() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm({
+    resolver: joiResolver(SignupSchema),
+  });
 
   const onValid = (data: any) => {
     console.log("onValid", data);
@@ -84,7 +88,7 @@ export default function SignupForm() {
             placeholder="••••••••"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             required
-            {...register("password")}
+            {...register("passwordConfirm")}
           />
         </div>
 
