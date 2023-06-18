@@ -10,8 +10,17 @@ export default function SignupForm() {
     resolver: joiResolver(SignupSchema),
   });
 
-  const onValid = (data: any) => {
+  const onValid = async (data: any) => {
     console.log("onValid", data);
+    const response = await fetch("/api/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const res = await response.json();
+    console.log(res);
   };
   const onError = (error: any) => {
     console.log("onError", error);
