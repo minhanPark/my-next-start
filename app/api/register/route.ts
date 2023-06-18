@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 import SignupSchema from "@/app/libs/validations/SignupSchema";
+import { ValidationError } from "joi";
 
 interface Form {
   username: string;
@@ -40,14 +41,21 @@ export async function POST(request: Request) {
       statuss: 200,
       oks: true,
     });
-  } catch (e: any) {
-    if (e.name === "ValidationError") {
+  } catch (e) {
+    if (e instanceof ValidationError) {
       return NextResponse.json({
         statuss: 200,
         oks: false,
         message: e.message,
       });
     }
+    // if (e.name === "ValidationError") {
+    //   return NextResponse.json({
+    //     statuss: 200,
+    //     oks: false,
+    //     message: e.message,
+    //   });
+    // }
     return NextResponse.json({
       statuss: 200,
       oks: false,
