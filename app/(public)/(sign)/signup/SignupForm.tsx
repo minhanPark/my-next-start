@@ -4,8 +4,10 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import SignupSchema from "@/app/libs/validations/SignupSchema";
 import { joiResolver } from "@hookform/resolvers/joi";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
+  const router = useRouter();
   const { register, handleSubmit } = useForm({
     resolver: joiResolver(SignupSchema),
   });
@@ -20,7 +22,9 @@ export default function SignupForm() {
       },
     });
     const res = await response.json();
-    console.log(res);
+    if (res.oks) {
+      router.push("/");
+    }
   };
   const onError = (error: any) => {
     console.log("onError", error);
