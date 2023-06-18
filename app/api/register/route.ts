@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 import SignupSchema from "@/app/libs/validations/SignupSchema";
 import { ValidationError } from "joi";
+import { generateToken } from "@/app/libs/token";
 
 interface Form {
   username: string;
@@ -29,18 +30,27 @@ export async function POST(request: Request) {
         message: "Email already exists",
       });
     }
-    await prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         username,
         email,
         hashedPassword: password,
       },
     });
-
-    return NextResponse.json({
-      statuss: 200,
-      oks: true,
-    });
+    const token = generateToken(createdUser.id);
+    console.log(token);
+    const response = NextResponse.json(
+      {
+        statuss: 200,
+        oks: true,
+      },
+      {
+        headers: {
+          "Set-Cookie": `x-token=${token}; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax`,
+        },
+      }
+    );
+    return response;
   } catch (e) {
     if (e instanceof ValidationError) {
       return NextResponse.json({
